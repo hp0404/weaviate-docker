@@ -1,0 +1,32 @@
+networks:
+  net:
+    driver: bridge
+services:
+  weaviate:
+    command:
+      - --host
+      - 0.0.0.0
+      - --port
+      - '8080'
+      - --scheme
+      - http
+    image: cr.weaviate.io/semitechnologies/weaviate:1.25.4
+    ports:
+      - 8006:8080
+      - 50051:50051
+    volumes:
+      - ./weaviate_data:/var/lib/weaviate
+    networks:
+      - net
+    restart: on-failure:0
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_APIKEY_ENABLED: 'true'
+      AUTHENTICATION_APIKEY_ALLOWED_KEYS: ${API_KEY}
+      AUTHENTICATION_APIKEY_USERS: 'admin'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      ENABLE_MODULES: ''
+      CLUSTER_HOSTNAME: 'node1'
+volumes:
+  weaviate_data:
